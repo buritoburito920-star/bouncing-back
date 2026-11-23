@@ -184,9 +184,10 @@ size = Vector2(11, 23)
 script = ExtResource("1_cvnsp")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=676422632]
+visibility_layer = 2
 position = Vector2(-1, -16)
 sprite_frames = SubResource("SpriteFrames_1gqpt")
-animation = &"Fall"
+animation = &"Idle"
 autoplay = "Idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1477219069]
