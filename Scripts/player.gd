@@ -28,7 +28,10 @@ func _on_timer_timeout() -> void:
 	is_stunned = false
 	animations.play("Idle")
 	
-	
+func _ready() -> void:
+	if Global.use_custom_spawn:
+		global_position = Global.spawn_position
+		Global.use_custom_spawn = false
 
 func _physics_process(delta: float) -> void:
 	# gravity
