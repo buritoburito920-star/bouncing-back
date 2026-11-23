@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://4c6xcqsjem5"]
+
+[ext_resource type="FontFile" uid="uid://c7f6yrgsgw4mh" path="res://Assets/Fonts/PixelOperator8.ttf" id="1_rwas2"]
+[ext_resource type="Script" uid="uid://8eyan4wtjma0" path="res://button.gd" id="2_tseak"]
+
+[node name="Death_screen" type="Control" unique_id=1682988339]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1331521840]
+layout_mode = 0
+offset_left = -120.0
+offset_top = -72.0
+offset_right = 128.0
+offset_bottom = 72.0
+color = Color(0, 0, 0, 1)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1728003273]
+zoom = Vector2(5, 5)
+
+[node name="Label" type="Label" parent="." unique_id=2104326842]
+layout_mode = 0
+offset_left = -48.0
+offset_top = -48.0
+offset_right = 54.0
+offset_bottom = -25.0
+theme_override_colors/font_color = Color(0.76029456, 0, 0.18099156, 1)
+theme_override_fonts/font = ExtResource("1_rwas2")
+text = "You Died"
+
+[node name="Button" type="Button" parent="." unique_id=1589071121]
+layout_mode = 0
+offset_left = -32.0
+offset_top = -8.0
+offset_right = 39.0
+offset_bottom = 16.0
+theme_override_fonts/font = ExtResource("1_rwas2")
+theme_override_font_sizes/font_size = 8
+text = "Play Again"
+script = ExtResource("2_tseak")
+
+[connection signal="pressed" from="Button" to="Button" method="_on_pressed"]

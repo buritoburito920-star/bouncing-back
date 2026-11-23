@@ -181,6 +181,9 @@ animations = [{
 size = Vector2(11, 23)
 
 [node name="Player" type="CharacterBody2D" unique_id=749129910]
+position = Vector2(0, 1)
+collision_layer = 3
+collision_mask = 3
 script = ExtResource("1_cvnsp")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=676422632]
@@ -191,7 +194,8 @@ animation = &"Idle"
 autoplay = "Idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1477219069]
-position = Vector2(0, -11.5)
+light_mask = 3
+position = Vector2(0, -13)
 shape = SubResource("RectangleShape2D_eljyk")
 
 [node name="Timer" type="Timer" parent="." unique_id=1710482124]
