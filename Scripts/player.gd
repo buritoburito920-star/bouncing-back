@@ -1,25 +1,107 @@
 extends CharacterBody2D
 
+# constants
+const SPEED = 120
+const JUMP_VELOCITY = -500
+const JUMP_H_SPEED = 200
+const BOUNCE_DAMP = 0.55
+const MIN_BOUNCE_SPEED = 20
+const BUFFER_TIME: int = 1000
 
-const SPEED = 100.0
-const JUMP_VELOCITY = -200.0
+# variables
+var jump_charge = 0.0
+var was_in_air: bool = false
+var last_direction: float = 0.0
+var last_direction_time: int = 0
+var shake_intensity: float = 0.0
+var is_stunned: bool = false
 
+
+@onready var animations: AnimatedSprite2D = $AnimatedSprite2D
+@onready var timer: Timer = $Timer
+@onready var camera: Camera2D = $Camera2D
+
+
+
+func _on_timer_timeout() -> void:
+	is_stunned = false
+	animations.play("Idle")
 
 func _physics_process(delta: float) -> void:
-	# Add the gravity.
+	# gravity
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-
-	# Handle jump.
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
-
-	# Get the input direction and handle the movement/deceleration.
-	# As good practice, you should replace UI actions with custom gameplay actions.
+	
 	var direction := Input.get_axis("ui_left", "ui_right")
-	if direction:
-		velocity.x = direction * SPEED
+	
+	# buffer
+	if direction != 0:
+		last_direction = direction
+		last_direction_time = Time.get_ticks_msec()
+	
+	# charge jump
+	if Input.is_action_pressed("ui_accept") and is_on_floor() and not is_stunned:
+		jump_charge += 0.7 * delta
+		jump_charge = clamp(jump_charge, 0.1, 1.0)
+		velocity.x = 0
+		if animations.animation != "Jump_charge":
+			animations.play("Jump_charge")
+		shake_intensity = jump_charge * 0.6
+	
+	elif Input.is_action_just_released("ui_accept") and is_on_floor() and not is_stunned:
+		var launch_dir = 0.0
+		if direction != 0:
+			launch_dir = direction
+		elif Time.get_ticks_msec() - last_direction_time <= BUFFER_TIME:
+			launch_dir = last_direction
+		animations.play("Jump_air")
+		
+		velocity.y = JUMP_VELOCITY * jump_charge
+		velocity.x = jump_charge * JUMP_H_SPEED * launch_dir
+		jump_charge = 0.0
+		shake_intensity = 0.0
+	
+	#walking
+	elif is_on_floor() and not is_stunned:
+		if direction:
+			velocity.x = direction * SPEED
+		else:
+			velocity.x = move_toward(velocity.x, 0, SPEED)
+		
+		if abs(velocity.x) <= 1:
+			animations.play("Idle")
+		else:
+			animations.play("Walking")
+		
+		if direction == 1:
+			animations.flip_h = false
+		elif direction == -1:
+			animations.flip_h = true
+			
+	if not is_on_floor() and velocity.y >= 500:
+		was_in_air = true
+		animations.play("Jump_air")
+	
+	if is_on_floor() and was_in_air:
+		is_stunned = true
+		velocity.x = 0
+		animations.play("Fall")
+		timer.start()
+		was_in_air = false
+	
+	# camera shak
+	if shake_intensity > 0.0:
+		camera.offset = Vector2(randf_range(-shake_intensity, shake_intensity), randf_range(-shake_intensity, shake_intensity))
+		shake_intensity = lerp(shake_intensity, 0.0, delta * 4.0)
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-
+		camera.offset = Vector2.ZERO
+	
+	# bounce
+	var pre_velocity := velocity
 	move_and_slide()
+	
+	if not is_on_floor() and is_on_wall() and abs(pre_velocity.x) > MIN_BOUNCE_SPEED:
+		var normal := get_wall_normal()
+		velocity.x = normal.x * abs(pre_velocity.x) * BOUNCE_DAMP
+		velocity.y = pre_velocity.y
+		animations.flip_h = velocity.x < 0
