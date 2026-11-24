@@ -9,6 +9,9 @@ const MIN_BOUNCE_SPEED = 20
 const BUFFER_TIME: int = 500
 const JUMP_VELOCITY2 = -300
 const SPRINT_SPEED = 200
+const DASH_SPEED = 450
+const DASH_TIME = 0.15
+const DASH_COOLDOWN = 2
 
 # variables
 var jump_charge = 0.0
@@ -17,7 +20,9 @@ var last_direction: float = 0.0
 var last_direction_time: int = 0
 var shake_intensity: float = 0.0
 var is_stunned: bool = false
-var double_jump = 1
+var double_jump: int = 1
+var is_dashing: bool = false
+var can_dash: bool = true
 
 
 @onready var animations: AnimatedSprite2D = $AnimatedSprite2D
@@ -130,6 +135,12 @@ func _physics_process(delta: float) -> void:
 	
 	
 	else:
+		
+		if is_dashing:
+			velocity.y = 0
+			move_and_slide()
+			return
+		
 		if direction != 0:
 			velocity.x = SPEED * direction
 		else:
@@ -147,7 +158,7 @@ func _physics_process(delta: float) -> void:
 			animations.flip_h = true
 		
 		if Input.is_action_pressed("ui_accept") and is_on_floor():
-			velocity.y = JUMP_VELOCITY2
+			velocity.y = JUMP_VELOCITY2 + randf_range(-20, 30)
 		
 		if Input.is_action_pressed("Sprinting"):
 			velocity.x = SPRINT_SPEED * direction
@@ -155,18 +166,23 @@ func _physics_process(delta: float) -> void:
 				animations.play("Running")
 			else:
 				animations.play("Idle")
-				
+			
+		if not is_on_floor():
+			animations.play("Jump_air")
 		if direction != 0:
 			$RayCastLow.target_position.x = 10 * sign(direction)
 			$RayCastHigh.target_position.x = 10 * sign(direction)
 		
-		if Input.is_action_pressed("ui_accept") and direction != 0 and not is_on_floor():
+		if Input.is_action_just_pressed("ui_accept") and direction != 0 and not is_on_floor():
 			if $RayCastLow.is_colliding() and not $RayCastHigh.is_colliding():
-				position.y += -10
+				position.y += -16
+				
+				
+		if Input.is_action_just_pressed("dash") and can_dash and not is_dashing:
+			start_dash(direction)
+		
 		
 		move_and_slide()
-		
-		
 		
 		
 		
@@ -184,3 +200,18 @@ func _physics_process(delta: float) -> void:
 			camera.zoom.x -= 1
 			camera.zoom.y -= 1
 	
+func start_dash(dir: float):
+	is_dashing = true
+	can_dash = false
+	var dash_dir := dir
+	if dash_dir == 0:
+		dash_dir = -1.0 if animations.flip_h else 1.0
+		
+	velocity.x = dash_dir * DASH_SPEED
+	velocity.y = 0
+	animations.play("Running")
+	await get_tree().create_timer(DASH_TIME).timeout
+	is_dashing = false
+	velocity.x = 0
+	await get_tree().create_timer(DASH_COOLDOWN).timeout
+	can_dash = true

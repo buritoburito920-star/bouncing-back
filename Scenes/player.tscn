@@ -202,11 +202,11 @@ shape = SubResource("RectangleShape2D_eljyk")
 one_shot = true
 
 [node name="RayCastLow" type="RayCast2D" parent="." unique_id=883353874]
-position = Vector2(0, -7)
+position = Vector2(0, -8)
 target_position = Vector2(10, 0)
 
 [node name="RayCastHigh" type="RayCast2D" parent="." unique_id=1785982922]
-position = Vector2(0, -19)
+position = Vector2(0, -24)
 target_position = Vector2(10, 0)
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
