@@ -3,7 +3,7 @@ extends Node
 @onready var hearts: HBoxContainer = $"../Hearts"
 @onready var timer: Timer = $Timer
 @onready var player: CharacterBody2D = $"../Player"
-@onready var animation_player: AnimationPlayer = $"../AnimatableBody2D/AnimationPlayer"
+@onready var animation_player: AnimationPlayer = %AnimationPlayer
 @onready var camera: Camera2D = %Camera2D
 
 #consts
@@ -11,7 +11,7 @@ const FULL_HEART = 72
 const EMPTY_HEART = 108
 
 #vars
-var health := 10
+var health := 3
 var aniamtion_played = false
 var shake_intensity = randf_range(1, 5)
 @onready var hearts_a = hearts.get_children()
