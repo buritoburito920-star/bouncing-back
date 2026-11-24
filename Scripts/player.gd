@@ -7,6 +7,8 @@ const JUMP_H_SPEED = 200
 const BOUNCE_DAMP = 0.55
 const MIN_BOUNCE_SPEED = 20
 const BUFFER_TIME: int = 500
+const JUMP_VELOCITY2 = -300
+const SPRINT_SPEED = 200
 
 # variables
 var jump_charge = 0.0
@@ -39,73 +41,73 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 	
 	var direction := Input.get_axis("ui_left", "ui_right")
-	
-	# buffer
-	if direction != 0:
-		last_direction = direction
-		last_direction_time = Time.get_ticks_msec()
-	
-	# charge jump
-	if Input.is_action_pressed("ui_accept") and double_jump > 0 and not is_stunned:
-		jump_charge += 0.7 * delta
-		jump_charge = clamp(jump_charge, 0.1, 1.0)
-		velocity.x = 0
-		if animations.animation != "Jump_charge":
-			animations.play("Jump_charge")
-		shake_intensity = jump_charge * 0.6
-		if not is_on_floor():
-			velocity.x = 0
-			velocity.y = 5
-	
-	elif Input.is_action_just_released("ui_accept") and double_jump > 0 and not is_stunned:
-		var launch_dir = 0.0
+	if get_tree().current_scene.scene_file_path == "res://Scenes/game.tscn" or get_tree().current_scene.scene_file_path == "res://Scenes/secret_room.tscn":
+		# buffer
 		if direction != 0:
-			launch_dir = direction
-		elif Time.get_ticks_msec() - last_direction_time <= BUFFER_TIME:
-			launch_dir = last_direction
-		if launch_dir == 1:
-			animations.flip_h = false
-		elif launch_dir == -1:
-			animations.flip_h = true
-		animations.play("Jump_air")
-		double_jump -= 1
-		
-		velocity.y = JUMP_VELOCITY * jump_charge
-		velocity.x = jump_charge * JUMP_H_SPEED * launch_dir
-		jump_charge = 0.0
-		shake_intensity = 0.0
-		
+			last_direction = direction
+			last_direction_time = Time.get_ticks_msec()
 	
-	#walking
-	elif is_on_floor() and not is_stunned:
-		if direction:
-			velocity.x = direction * SPEED
-		else:
-			velocity.x = move_toward(velocity.x, 0, SPEED)
-		
-		if abs(velocity.x) <= 1:
-			animations.play("Idle")
-		else:
-			animations.play("Walking")
-		
-		if direction == 1:
-			animations.flip_h = false
-		elif direction == -1:
-			animations.flip_h = true
+		# charge jump
+		if Input.is_action_pressed("ui_accept") and double_jump > 0 and not is_stunned:
+			jump_charge += 0.7 * delta
+			jump_charge = clamp(jump_charge, 0.1, 1.0)
+			velocity.x = 0
+			if animations.animation != "Jump_charge":
+				animations.play("Jump_charge")
+			shake_intensity = jump_charge * 0.6
+			if not is_on_floor():
+				velocity.x = 0
+				velocity.y = 5
+	
+		elif Input.is_action_just_released("ui_accept") and double_jump > 0 and not is_stunned:
+			var launch_dir = 0.0
+			if direction != 0:
+				launch_dir = direction
+			elif Time.get_ticks_msec() - last_direction_time <= BUFFER_TIME:
+				launch_dir = last_direction
+			if launch_dir == 1:
+				animations.flip_h = false
+			elif launch_dir == -1:
+				animations.flip_h = true
+			animations.play("Jump_air")
+			double_jump -= 1
 			
-	if not is_on_floor() and velocity.y >= 500:
-		was_in_air = true
-		animations.play("Jump_air")
+			velocity.y = JUMP_VELOCITY * jump_charge
+			velocity.x = jump_charge * JUMP_H_SPEED * launch_dir
+			jump_charge = 0.0
+			shake_intensity = 0.0
+		
 	
-	if is_on_floor() and was_in_air:
-		is_stunned = true
-		velocity.x = 0
-		animations.play("Fall")
-		timer.start()
-		was_in_air = false
+		#walking
+		elif is_on_floor() and not is_stunned:
+			if direction:
+				velocity.x = direction * SPEED
+			else:
+				velocity.x = move_toward(velocity.x, 0, SPEED)
+			
+			if abs(velocity.x) <= 1:
+				animations.play("Idle")
+			else:
+				animations.play("Walking")
+		
+			if direction == 1:
+				animations.flip_h = false
+			elif direction == -1:
+				animations.flip_h = true
+			
+		if not is_on_floor() and velocity.y >= 500:
+			was_in_air = true
+			animations.play("Jump_air")
 	
-	if is_on_floor():
-		double_jump = 1
+		if is_on_floor() and was_in_air:
+			is_stunned = true
+			velocity.x = 0
+			animations.play("Fall")
+			timer.start()
+			was_in_air = false
+	
+		if is_on_floor():
+			double_jump = 1
 	
 	# camera shak
 	#if shake_intensity > 0.0:
@@ -114,15 +116,56 @@ func _physics_process(delta: float) -> void:
 	#else:
 		#camera.offset = Vector2.ZERO
 	
-	# bounce
-	var pre_velocity := velocity
-	move_and_slide()
 	
-	if not is_on_floor() and is_on_wall() and abs(pre_velocity.x) > MIN_BOUNCE_SPEED:
-		var normal := get_wall_normal()
-		velocity.x = normal.x * abs(pre_velocity.x) * BOUNCE_DAMP
-		velocity.y = pre_velocity.y
-		animations.flip_h = velocity.x < 0
+	
+		# bounce
+		var pre_velocity := velocity
+		move_and_slide()
+	
+		if not is_on_floor() and is_on_wall() and abs(pre_velocity.x) > MIN_BOUNCE_SPEED:
+			var normal := get_wall_normal()
+			velocity.x = normal.x * abs(pre_velocity.x) * BOUNCE_DAMP
+			velocity.y = pre_velocity.y
+			animations.flip_h = velocity.x < 0
+	
+	
+	else:
+		if direction != 0:
+			velocity.x = SPEED * direction
+		else:
+			velocity.x = move_toward(velocity.x, 0, SPEED)
+			
+		if not Input.is_action_pressed("Sprinting"):
+			if abs(velocity.x) <= 1:
+				animations.play("Idle")
+			else:
+				animations.play("Walking")
+			
+		if direction == 1:
+				animations.flip_h = false
+		elif direction == -1:
+			animations.flip_h = true
+		
+		if Input.is_action_pressed("ui_accept") and is_on_floor():
+			velocity.y = JUMP_VELOCITY2
+		
+		if Input.is_action_pressed("Sprinting"):
+			velocity.x = SPRINT_SPEED * direction
+			if abs(velocity.x) >= 1:
+				animations.play("Running")
+			else:
+				animations.play("Idle")
+		
+		move_and_slide()
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 	# zooming
 	if Input.is_action_just_pressed("zoom in"):
@@ -133,3 +176,4 @@ func _physics_process(delta: float) -> void:
 		if camera.zoom.x > 1:
 			camera.zoom.x -= 1
 			camera.zoom.y -= 1
+	

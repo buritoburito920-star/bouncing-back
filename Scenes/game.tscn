@@ -827,7 +827,7 @@ atlas = SubResource("CompressedTexture2D_v158k")
 region = Rect2(72, 36, 18, 18)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xqk0y"]
-size = Vector2(325, 116)
+size = Vector2(38.5, 36)
 
 [node name="Game" type="Node2D" unique_id=220658951]
 
@@ -1125,7 +1125,7 @@ color = Color(0, 0, 0, 1)
 [node name="NextGame" type="Area2D" parent="ColorRect" unique_id=1798114827]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ColorRect/NextGame" unique_id=70685299]
-position = Vector2(157, 233)
+position = Vector2(213, 1660)
 shape = SubResource("RectangleShape2D_xqk0y")
 
 [connection signal="body_entered" from="TileMap/Secret" to="GameManeger" method="_on_secret_body_entered"]
@@ -1145,3 +1145,4 @@ shape = SubResource("RectangleShape2D_xqk0y")
 [connection signal="body_entered" from="TileMap/Spikes/Spikes15" to="GameManeger" method="_on_spikes_15_body_entered"]
 [connection signal="body_entered" from="TileMap/Spikes/Spikes" to="GameManeger" method="_on_spikes_body_entered"]
 [connection signal="timeout" from="GameManeger/Timer2" to="GameManeger" method="_on_timer_2_timeout"]
+[connection signal="body_entered" from="ColorRect/NextGame" to="GameManeger" method="_on_next_game_body_entered"]
