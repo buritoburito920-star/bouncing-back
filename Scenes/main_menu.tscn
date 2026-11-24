@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://7ngdf7ancgt1"]
 
 [ext_resource type="FontFile" uid="uid://c7f6yrgsgw4mh" path="res://Assets/Fonts/PixelOperator8.ttf" id="1_28flt"]
-[ext_resource type="Script" uid="uid://b1mbxxj64icke" path="res://Scenes/button.gd" id="2_48xlc"]
+[ext_resource type="Script" uid="uid://b1mbxxj64icke" path="res://Scripts/button.gd" id="2_48xlc"]
 
 [node name="MainMenu" type="Control" unique_id=586848360]
 layout_mode = 3

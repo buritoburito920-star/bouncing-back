@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://4c6xcqsjem5"]
 
 [ext_resource type="FontFile" uid="uid://c7f6yrgsgw4mh" path="res://Assets/Fonts/PixelOperator8.ttf" id="1_rwas2"]
-[ext_resource type="Script" uid="uid://8eyan4wtjma0" path="res://button.gd" id="2_tseak"]
+[ext_resource type="Script" uid="uid://8eyan4wtjma0" path="res://Scripts/button (2).gd" id="2_tseak"]
 
 [node name="Death_screen" type="Control" unique_id=1682988339]
 layout_mode = 3

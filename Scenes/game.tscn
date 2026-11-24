@@ -819,7 +819,7 @@ collision_layer = 2
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TileMap/Spikes" unique_id=1136193009]
-position = Vector2(108, -504)
+position = Vector2(104, -504)
 shape = SubResource("RectangleShape2D_1gqpt")
 
 [node name="Secret" type="Area2D" parent="TileMap" unique_id=1623390167]
@@ -835,6 +835,7 @@ shape = SubResource("RectangleShape2D_eljyk")
 position = Vector2(32, -8)
 
 [node name="Camera2D" type="Camera2D" parent="Player" unique_id=1300024744]
+unique_name_in_owner = true
 offset = Vector2(0, -20)
 zoom = Vector2(3, 3)
 position_smoothing_enabled = true
@@ -941,4 +942,8 @@ stretch_mode = 5
 
 [node name="GameManeger" parent="." unique_id=1317996471 instance=ExtResource("6_i6g32")]
 
+[node name="Timer2" type="Timer" parent="GameManeger" unique_id=708275455]
+
+[connection signal="body_entered" from="TileMap/Spikes" to="GameManeger" method="_on_spikes_body_entered"]
 [connection signal="body_entered" from="TileMap/Secret" to="GameManeger" method="_on_secret_body_entered"]
+[connection signal="timeout" from="GameManeger/Timer2" to="GameManeger" method="_on_timer_2_timeout"]
