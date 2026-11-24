@@ -155,9 +155,16 @@ func _physics_process(delta: float) -> void:
 				animations.play("Running")
 			else:
 				animations.play("Idle")
+				
+		if direction != 0:
+			$RayCastLow.target_position.x = 10 * sign(direction)
+			$RayCastHigh.target_position.x = 10 * sign(direction)
+		
+		if Input.is_action_pressed("ui_accept") and direction != 0 and not is_on_floor():
+			if $RayCastLow.is_colliding() and not $RayCastHigh.is_colliding():
+				position.y += -10
 		
 		move_and_slide()
-		
 		
 		
 		

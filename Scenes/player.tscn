@@ -190,7 +190,7 @@ script = ExtResource("1_cvnsp")
 visibility_layer = 2
 position = Vector2(-1, -16)
 sprite_frames = SubResource("SpriteFrames_1gqpt")
-animation = &"Idle"
+animation = &"Running"
 autoplay = "Idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1477219069]
@@ -200,5 +200,13 @@ shape = SubResource("RectangleShape2D_eljyk")
 
 [node name="Timer" type="Timer" parent="." unique_id=1710482124]
 one_shot = true
+
+[node name="RayCastLow" type="RayCast2D" parent="." unique_id=883353874]
+position = Vector2(0, -7)
+target_position = Vector2(10, 0)
+
+[node name="RayCastHigh" type="RayCast2D" parent="." unique_id=1785982922]
+position = Vector2(0, -19)
+target_position = Vector2(10, 0)
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
