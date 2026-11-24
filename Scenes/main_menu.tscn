@@ -1,7 +1,22 @@
 [gd_scene format=3 uid="uid://7ngdf7ancgt1"]
 
 [ext_resource type="FontFile" uid="uid://c7f6yrgsgw4mh" path="res://Assets/Fonts/PixelOperator8.ttf" id="1_28flt"]
+[ext_resource type="Texture2D" uid="uid://d12c0y5f8o7k5" path="res://Assets/main_menu2.png" id="1_ce3w2"]
 [ext_resource type="Script" uid="uid://b1mbxxj64icke" path="res://Scripts/button.gd" id="2_48xlc"]
+[ext_resource type="Texture2D" uid="uid://cgyby4bn5lir" path="res://Assets/Sprites/Maptiles/tilemap_packed.png" id="3_n45e2"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_n45e2"]
+texture = ExtResource("3_n45e2")
+region_rect = Rect2(306, 18, 54, 18)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_cp0ys"]
+texture = ExtResource("3_n45e2")
+region_rect = Rect2(306, 18, 54, 18)
+modulate_color = Color(0.6255971, 0.6255971, 0.6255971, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ce3w2"]
+texture = ExtResource("3_n45e2")
+region_rect = Rect2(306, 18, 54, 18)
 
 [node name="MainMenu" type="Control" unique_id=586848360]
 layout_mode = 3
@@ -17,10 +32,31 @@ offset_left = -88.0
 offset_top = -48.0
 offset_right = 88.0
 offset_bottom = 48.0
-color = Color(0.0031151485, 0.05328828, 0.18205094, 1)
+color = Color(0, 0, 0, 1)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1009928281]
 zoom = Vector2(7, 7)
+
+[node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=1445337046]
+
+[node name="MainMenu2" type="Sprite2D" parent="CanvasModulate" unique_id=1169349534]
+position = Vector2(-1.1368684e-13, 1.1368684e-13)
+scale = Vector2(0.1330769, 0.13307692)
+texture = ExtResource("1_ce3w2")
+
+[node name="Button" type="Button" parent="." unique_id=2050177734]
+layout_mode = 0
+offset_left = -32.0
+offset_right = 32.0
+offset_bottom = 16.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_font_sizes/font_size = 8
+theme_override_styles/normal = SubResource("StyleBoxTexture_n45e2")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_cp0ys")
+theme_override_styles/hover = SubResource("StyleBoxTexture_ce3w2")
+text = "Play"
+script = ExtResource("2_48xlc")
 
 [node name="Label" type="Label" parent="." unique_id=885788954]
 layout_mode = 0
@@ -28,19 +64,10 @@ offset_left = -56.0
 offset_top = -24.0
 offset_right = 58.0
 offset_bottom = -16.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("1_28flt")
 theme_override_font_sizes/font_size = 8
 text = "Bouncing Back"
 horizontal_alignment = 1
-
-[node name="Button" type="Button" parent="." unique_id=2050177734]
-layout_mode = 0
-offset_left = -32.0
-offset_right = 32.0
-offset_bottom = 16.0
-theme_override_fonts/font = ExtResource("1_28flt")
-theme_override_font_sizes/font_size = 8
-text = "Play"
-script = ExtResource("2_48xlc")
 
 [connection signal="pressed" from="Button" to="Button" method="_on_pressed"]

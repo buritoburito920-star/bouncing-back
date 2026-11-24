@@ -11,7 +11,7 @@ const FULL_HEART = 72
 const EMPTY_HEART = 108
 
 #vars
-var health := 3
+var health := 10
 var aniamtion_played = false
 var shake_intensity = randf_range(1, 5)
 @onready var hearts_a = hearts.get_children()
@@ -95,3 +95,58 @@ func _physics_process(delta: float) -> void:
 		current_shake_intensity = lerp(current_shake_intensity, 0.0, delta)
 	else:
 		camera.offset = Vector2.ZERO
+
+
+func _on_spikes_2_body_entered(body: Node2D) -> void:
+	take_damage()
+
+
+func _on_spikes_3_body_entered(body: Node2D) -> void:
+	take_damage()
+
+
+func _on_spikes_4_body_entered(body: Node2D) -> void:
+	take_damage()
+
+
+func _on_spikes_5_body_entered(body: Node2D) -> void:
+	take_damage()
+
+func _on_spikes_6_body_entered(body: Node2D) -> void:
+	take_damage()
+
+
+func _on_spikes_7_body_entered(body: Node2D) -> void:
+	take_damage()
+
+
+func _on_spikes_8_body_entered(body: Node2D) -> void:
+	take_damage()
+
+
+func _on_spikes_9_body_entered(body: Node2D) -> void:
+	take_damage()
+
+
+func _on_spikes_10_body_entered(body: Node2D) -> void:
+	take_damage()
+
+
+func _on_spikes_11_body_entered(body: Node2D) -> void:
+	take_damage()
+
+
+func _on_spikes_12_body_entered(body: Node2D) -> void:
+	take_damage()
+
+
+func _on_spikes_13_body_entered(body: Node2D) -> void:
+	take_damage()
+
+
+func _on_spikes_14_body_entered(body: Node2D) -> void:
+	take_damage()
+
+
+func _on_spikes_15_body_entered(body: Node2D) -> void:
+	take_damage()
