@@ -13,6 +13,7 @@ const DASH_SPEED = 450
 const DASH_TIME = 0.15
 const DASH_COOLDOWN = 2
 
+
 # variables
 var jump_charge = 0.0
 var was_in_air: bool = false
@@ -28,6 +29,7 @@ var can_dash: bool = true
 @onready var animations: AnimatedSprite2D = $AnimatedSprite2D
 @onready var timer: Timer = $Timer
 @onready var camera: Camera2D = $Camera2D
+@onready var movement_game_2: Node = $Movement_game_2
 
 
 
@@ -39,6 +41,15 @@ func _ready() -> void:
 	if Global.use_custom_spawn:
 		global_position = Global.spawn_position
 		Global.use_custom_spawn = false
+	movement_game_2.set_physics_process(false)
+	
+func enter_new_area() -> void:
+	set_physics_process(false)
+	movement_game_2.set_physics_process(true)
+
+func exit_new_area() -> void:
+	movement_game_2.set_physics_process(false)
+	set_physics_process(true)
 
 func _physics_process(delta: float) -> void:
 	# gravity
@@ -134,62 +145,6 @@ func _physics_process(delta: float) -> void:
 			animations.flip_h = velocity.x < 0
 	
 	
-	else:
-		
-		if is_dashing:
-			velocity.y = 0
-			move_and_slide()
-			return
-		
-		if direction != 0:
-			velocity.x = SPEED * direction
-		else:
-			velocity.x = move_toward(velocity.x, 0, SPEED)
-			
-		if not Input.is_action_pressed("Sprinting"):
-			if abs(velocity.x) <= 1:
-				animations.play("Idle")
-			else:
-				animations.play("Walking")
-			
-		if direction == 1:
-				animations.flip_h = false
-		elif direction == -1:
-			animations.flip_h = true
-		
-		if Input.is_action_pressed("ui_accept") and is_on_floor():
-			velocity.y = JUMP_VELOCITY2 + randf_range(-20, 30)
-		
-		if Input.is_action_pressed("Sprinting"):
-			velocity.x = SPRINT_SPEED * direction
-			if abs(velocity.x) >= 1:
-				animations.play("Running")
-			else:
-				animations.play("Idle")
-			
-		if not is_on_floor():
-			animations.play("Jump_air")
-		if direction != 0:
-			$RayCastLow.target_position.x = 10 * sign(direction)
-			$RayCastHigh.target_position.x = 10 * sign(direction)
-		
-		if Input.is_action_just_pressed("ui_accept") and direction != 0 and not is_on_floor():
-			if $RayCastLow.is_colliding() and not $RayCastHigh.is_colliding():
-				position.y += -16
-				
-				
-		if Input.is_action_just_pressed("dash") and can_dash and not is_dashing:
-			start_dash(direction)
-		
-		
-		move_and_slide()
-		
-		
-		
-		
-		
-		
-		
 	# zooming
 	if Input.is_action_just_pressed("zoom in"):
 		if camera.zoom.x <= 5:

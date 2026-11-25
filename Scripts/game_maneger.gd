@@ -152,6 +152,6 @@ func _on_spikes_15_body_entered(body: Node2D) -> void:
 	take_damage()
 
 
-
 func _on_next_game_body_entered(body: Node2D) -> void:
-	get_tree().change_scene_to_file("res://Scenes/game_2.tscn")
+	player.enter_new_area()
+	get_tree().call_deferred("change_scene_to_file", "res://Scenes/game_2.tscn")
