@@ -17,7 +17,7 @@ var active_state := STATE.FALL
 
 const FALL_GRAVITY := 1500
 const FALL_VELOCITY := 500
-const WALK_VELOCITY := 200
+const WALK_VELOCITY := 120
 const JUMP_VELOCITY := -600
 const JUMP_DECCELERATION := 1500
 
