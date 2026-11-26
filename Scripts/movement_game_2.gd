@@ -5,6 +5,8 @@ extends Node
 @onready var collision_shape_2d: CollisionShape2D = %CollisionShape2D
 @onready var ledgespace: RayCast2D = %ledgespace
 @onready var ledge_climber: RayCast2D = %ledge_climber
+@onready var double_jump_animation_timer: Timer = $"../double_jump_animation_timer"
+@onready var animations: Timer = $"../animations"
 
 
 enum STATE {
@@ -29,12 +31,14 @@ const JUMP_DECCELERATION := 1500
 const DOUBLE_JUMP_VELOCITY := -450
 const FLOAT_GRAVITY := 200
 const FLOAT_VELOCITY := 100
-const LEDGE_JUMP_VELOCITY := -500
+const LEDGE_JUMP_VELOCITY := -100
 
 
 func _ready() -> void:
 	switch_state(active_state)
 	ledge_climber.add_exception(player)
+	
+	
 
 func _physics_process(delta: float) -> void:
 	process_state(delta)
@@ -60,7 +64,7 @@ func switch_state(to_state: STATE) -> void:
 			buffer_timer_2.stop()
 		
 		STATE.DOUBLE_JUMP:
-			#animated_sprite_2d.play("double_jump") # need double jump animations
+			animated_sprite_2d.play("Double_jump") 
 			player.velocity.y = DOUBLE_JUMP_VELOCITY
 			can_double_jump = false
 			
@@ -68,18 +72,18 @@ func switch_state(to_state: STATE) -> void:
 			if float_timer.time_left > 0:
 				active_state = previous_state
 				return
-			#animated_sprite_2d.play("float") # need flaot animations
+			animated_sprite_2d.play("Float")
 			player.velocity.y = 0
 		
 		STATE.LEDGE_CLIMB:
-			animated_sprite_2d.play("Jumping") # need a ledge climbing animations
+			animated_sprite_2d.play("LedgeClimb")
 			player.velocity = Vector2.ZERO
 			
 			player.global_position.y = ledge_climber.get_collision_point().y
 			can_double_jump = true
 		
 		STATE.LEDGE_JUMP:
-			animated_sprite_2d.play("Jumping")
+			animated_sprite_2d.play("Double_jump")
 			player.velocity.y = LEDGE_JUMP_VELOCITY
 			
 			
@@ -122,7 +126,9 @@ func process_state(delta: float) -> void:
 			if Input.is_action_just_released("ui_accept") or player.velocity.y >= 0:
 				player.velocity.y = 0
 				switch_state(STATE.FALL)
-				
+			match active_state:
+				STATE.DOUBLE_JUMP:
+					double_jump_animation_timer.start()
 				
 		STATE.FLOAT:
 			player.velocity.y = move_toward(player.velocity.y, FLOAT_VELOCITY, FLOAT_GRAVITY * delta)
@@ -137,8 +143,8 @@ func process_state(delta: float) -> void:
 				switch_state(STATE.LEDGE_CLIMB)
 				
 		STATE.LEDGE_CLIMB:
-			if animated_sprite_2d.is_playing():
-				animated_sprite_2d.play("Idle")
+			if not animated_sprite_2d.is_playing():
+				animated_sprite_2d.play("LedgeClimb")
 				var offset := ledge_climb_offset()
 				offset.x *= facing_direction
 				player.position += offset
@@ -186,3 +192,7 @@ func ledge_climb_offset() -> Vector2:
 	if shape is RectangleShape2D:
 		return Vector2(shape.size.x, -shape.size.y * 0.5)
 	return Vector2.ZERO
+
+
+func _on_double_jump_animation_timer_timeout() -> void:
+	animated_sprite_2d.play("Jump_air")

@@ -6,9 +6,29 @@
 [ext_resource type="Texture2D" uid="uid://cn4kymn7t5iof" path="res://Assets/Sprites/Player/update.png" id="4_fkybt"]
 [ext_resource type="Script" uid="uid://274w07ntnloa" path="res://Scripts/movement_game_2.gd" id="4_vgqql"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_bi64h"]
+atlas = ExtResource("4_fkybt")
+region = Rect2(96, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2ijsl"]
+atlas = ExtResource("4_fkybt")
+region = Rect2(0, 160, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p1odr"]
+atlas = ExtResource("4_fkybt")
+region = Rect2(32, 160, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_qqcod"]
 atlas = ExtResource("2_6t5aa")
 region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0gysh"]
+atlas = ExtResource("4_fkybt")
+region = Rect2(32, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vfarp"]
+atlas = ExtResource("4_fkybt")
+region = Rect2(64, 128, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cvnsp"]
 atlas = ExtResource("1_v0iea")
@@ -49,6 +69,18 @@ region = Rect2(64, 96, 32, 32)
 [sub_resource type="AtlasTexture" id="AtlasTexture_wpjfl"]
 atlas = ExtResource("4_fkybt")
 region = Rect2(0, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y6uwr"]
+atlas = ExtResource("4_fkybt")
+region = Rect2(64, 160, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_83xs0"]
+atlas = ExtResource("4_fkybt")
+region = Rect2(96, 160, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ypfnu"]
+atlas = ExtResource("4_fkybt")
+region = Rect2(0, 192, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3smsa"]
 atlas = ExtResource("1_v0iea")
@@ -94,10 +126,35 @@ region = Rect2(0, 96, 32, 32)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_bi64h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2ijsl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p1odr")
+}],
+"loop": 0,
+"name": &"Double_jump",
+"speed": 9.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_qqcod")
 }],
 "loop": 1,
 "name": &"Fall",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0gysh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vfarp")
+}],
+"loop": 1,
+"name": &"Float",
 "speed": 5.0
 }, {
 "frames": [{
@@ -149,6 +206,20 @@ animations = [{
 "loop": 1,
 "name": &"Jumping",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y6uwr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_83xs0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ypfnu")
+}],
+"loop": 0,
+"name": &"LedgeClimb",
+"speed": 28.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -205,7 +276,7 @@ unique_name_in_owner = true
 visibility_layer = 2
 position = Vector2(-1, -16)
 sprite_frames = SubResource("SpriteFrames_1gqpt")
-animation = &"Jumping"
+animation = &"LedgeClimb"
 autoplay = "Idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1477219069]
@@ -240,4 +311,13 @@ unique_name_in_owner = true
 position = Vector2(-14, -2)
 target_position = Vector2(0, -25)
 
+[node name="double_jump_animation_timer" type="Timer" parent="." unique_id=215354021]
+wait_time = 0.1
+one_shot = true
+
+[node name="animations" type="Timer" parent="." unique_id=1123602016]
+wait_time = 0.2
+one_shot = true
+
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="timeout" from="double_jump_animation_timer" to="Movement_game_2" method="_on_double_jump_animation_timer_timeout"]
