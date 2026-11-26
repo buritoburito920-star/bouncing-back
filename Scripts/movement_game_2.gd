@@ -7,6 +7,7 @@ extends Node
 @onready var ledge_climber: RayCast2D = %ledge_climber
 @onready var double_jump_animation_timer: Timer = $"../double_jump_animation_timer"
 @onready var animations: Timer = $"../animations"
+@onready var wall_slide: RayCast2D = %Wall_slide
 
 
 enum STATE {
@@ -16,7 +17,12 @@ enum STATE {
 	DOUBLE_JUMP,
 	FLOAT,
 	LEDGE_CLIMB,
-	LEDGE_JUMP
+	LEDGE_JUMP,
+	WALL_SLIDE,
+	WALL_JUMP,
+	WALL_CLIMB,
+	DASH,
+	TURNING,
 }
 var active_state := STATE.FALL
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
@@ -32,6 +38,8 @@ const DOUBLE_JUMP_VELOCITY := -450
 const FLOAT_GRAVITY := 200
 const FLOAT_VELOCITY := 100
 const LEDGE_JUMP_VELOCITY := -100
+const WALL_SLIDE_GRAVITY := 300
+const WALL_SLIDE_VELOCITY := 500
 
 
 func _ready() -> void:
@@ -86,6 +94,11 @@ func switch_state(to_state: STATE) -> void:
 			animated_sprite_2d.play("Double_jump")
 			player.velocity.y = LEDGE_JUMP_VELOCITY
 			
+		STATE.WALL_SLIDE:
+			animated_sprite_2d.play("Float") # need wall slide animaiton
+			player.velocity.y = 0
+			can_double_jump = true
+			
 			
 func process_state(delta: float) -> void:
 	match active_state:
@@ -105,6 +118,9 @@ func process_state(delta: float) -> void:
 					
 			elif is_input_toward_facing() and is_ledge() and is_space():
 				switch_state(STATE.LEDGE_CLIMB)
+				
+			elif is_input_toward_facing() and can_wall_slide():
+				switch_state(STATE.WALL_SLIDE)
 				
 				
 		STATE.FLOOR:
@@ -141,6 +157,8 @@ func process_state(delta: float) -> void:
 				switch_state(STATE.FALL)
 			elif is_input_toward_facing() and is_ledge() and is_space():
 				switch_state(STATE.LEDGE_CLIMB)
+			elif is_input_toward_facing() and can_wall_slide():
+				switch_state(STATE.WALL_SLIDE)
 				
 		STATE.LEDGE_CLIMB:
 			if not animated_sprite_2d.is_playing():
@@ -156,7 +174,17 @@ func process_state(delta: float) -> void:
 				player.position += offset
 				switch_state(STATE.JUMP)
 				
-				
+		STATE.WALL_SLIDE:
+			player.velocity.y = move_toward(player.velocity.y, WALL_SLIDE_VELOCITY, WALL_SLIDE_GRAVITY * delta)
+			handle_movement()
+			
+			if player.is_on_floor():
+				switch_state(STATE.FLOOR)
+			elif is_ledge() and is_space():
+				switch_state(STATE.LEDGE_CLIMB)
+			elif not can_wall_slide():
+				switch_state(STATE.FALL)
+			
 func handle_movement() -> void:
 	var direction := signf(Input.get_axis("left", "right"))
 	if direction:
@@ -165,6 +193,9 @@ func handle_movement() -> void:
 		ledge_climber.position.x = direction * abs(ledge_climber.position.x)
 		ledge_climber.target_position.x = direction * abs(ledge_climber.target_position.x)
 		ledge_climber.force_raycast_update()
+		wall_slide.position.x = direction * abs(wall_slide.position.x)
+		wall_slide.target_position.x = direction * abs(wall_slide.target_position.x)
+		wall_slide.force_raycast_update()
 	player.velocity.x = WALK_VELOCITY * direction
 	
 	
@@ -196,3 +227,10 @@ func ledge_climb_offset() -> Vector2:
 
 func _on_double_jump_animation_timer_timeout() -> void:
 	animated_sprite_2d.play("Jump_air")
+
+
+
+
+
+func can_wall_slide() -> bool:
+	return player.is_on_wall_only() and wall_slide.is_colliding()

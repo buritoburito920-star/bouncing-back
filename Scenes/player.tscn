@@ -276,7 +276,7 @@ unique_name_in_owner = true
 visibility_layer = 2
 position = Vector2(-1, -16)
 sprite_frames = SubResource("SpriteFrames_1gqpt")
-animation = &"LedgeClimb"
+animation = &"Idle"
 autoplay = "Idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1477219069]
@@ -318,6 +318,11 @@ one_shot = true
 [node name="animations" type="Timer" parent="." unique_id=1123602016]
 wait_time = 0.2
 one_shot = true
+
+[node name="Wall_slide" type="RayCast2D" parent="." unique_id=1724976865]
+unique_name_in_owner = true
+position = Vector2(0, -17)
+target_position = Vector2(15, 0)
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="double_jump_animation_timer" to="Movement_game_2" method="_on_double_jump_animation_timer_timeout"]
