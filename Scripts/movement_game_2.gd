@@ -53,6 +53,7 @@ const DASH_LENG := 100
 const DASH_VELOCITY := 600
 const SPRINT_VELOCITY := 400
 const SPRINT_ACCEL := 1800
+const FLOAT_ACCEL := 700
 
 
 func _ready() -> void:
@@ -81,7 +82,8 @@ func switch_state(to_state: STATE) -> void:
 			can_dash = true
 		
 		STATE.JUMP:
-			animated_sprite_2d.play("Jumping")
+			if previous_state != STATE.TURNING: 
+				animated_sprite_2d.play("Jumping")
 			player.velocity.y = JUMP_VELOCITY
 			buffer_timer_2.stop()
 		
@@ -143,6 +145,9 @@ func switch_state(to_state: STATE) -> void:
 			saved_position = player.position
 			can_dash = previous_state == STATE.FLOOR or previous_state == STATE.WALL_SLIDE
 			dash_jump_buffer = false
+			
+		STATE.TURNING:
+			set_facing_direction(-facing_direction)
 		
 func process_state(delta: float) -> void:
 	match active_state:
@@ -189,6 +194,8 @@ func process_state(delta: float) -> void:
 				switch_state(STATE.JUMP)
 			elif Input.is_action_just_pressed("Sprinting"):
 				switch_state(STATE.DASH)
+			elif is_sprinting and is_input_against_facing():
+				switch_state(STATE.TURNING)
 				
 		STATE.JUMP, STATE.DOUBLE_JUMP, STATE.LEDGE_JUMP, STATE.WALL_JUMP:
 			player.velocity.y = move_toward(player.velocity.y, 0, JUMP_DECCELERATION * delta)
@@ -218,7 +225,7 @@ func process_state(delta: float) -> void:
 				
 		STATE.FLOAT:
 			player.velocity.y = move_toward(player.velocity.y, FLOAT_VELOCITY, FLOAT_GRAVITY * delta)
-			handle_movement()
+			handle_movement(0, WALK_VELOCITY, FLOAT_ACCEL * delta)
 			
 			if player.is_on_floor():
 				switch_state(STATE.FLOOR)
@@ -294,6 +301,23 @@ func process_state(delta: float) -> void:
 				switch_state(STATE.LEDGE_CLIMB)
 			elif can_wall_slide():
 				switch_state(STATE.WALL_SLIDE)
+				
+				
+				
+				
+		STATE.TURNING:
+			if signf(player.velocity.x) == facing_direction and is_input_against_facing():
+				set_facing_direction(-facing_direction)
+			handle_movement()
+			
+			if not player.is_on_floor():
+				switch_state(STATE.FALL)
+			elif not Input.is_action_pressed("Sprinting") or player.velocity.x * facing_direction >= SPRINT_VELOCITY:
+				switch_state(STATE.FLOOR)
+			elif Input.is_action_just_pressed("ui_accept"):
+				animated_sprite_2d.play("Double_jump")
+				is_sprinting = false
+				switch_state(STATE.JUMP)
 			
 func handle_movement(input_direction: float = 0, horizontal_velocity: float = WALK_VELOCITY, step: float = WALK_VELOCITY) -> void:
 	if input_direction == 0:
@@ -304,7 +328,7 @@ func handle_movement(input_direction: float = 0, horizontal_velocity: float = WA
 
 func handle_sprint(delta: float) -> void:
 	handle_movement(facing_direction, SPRINT_VELOCITY, SPRINT_ACCEL * delta)
-	is_sprinting = Input.is_action_pressed("Sprinting") and not player.is_on_wall()
+	is_sprinting = Input.is_action_pressed("Sprinting")
 	
 func set_facing_direction(direction: float) -> void:
 	if direction:
@@ -320,6 +344,9 @@ func set_facing_direction(direction: float) -> void:
 	
 func is_input_toward_facing() -> bool:
 	return signf(Input.get_axis("left", "right")) == facing_direction
+	
+func is_input_against_facing() -> bool:
+	return signf(Input.get_axis("left", "right")) == -facing_direction
 	
 	
 func is_ledge() -> bool:
