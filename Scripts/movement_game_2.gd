@@ -153,7 +153,7 @@ func process_state(delta: float) -> void:
 	match active_state:
 		STATE.FALL:
 			player.velocity.y = move_toward(player.velocity.y, FALL_VELOCITY, FALL_GRAVITY * delta)
-			if is_sprinting:
+			if is_sprinting and player.is_on_floor():
 				handle_sprint(delta)
 			else:
 				handle_movement()
@@ -178,7 +178,7 @@ func process_state(delta: float) -> void:
 				
 				
 		STATE.FLOOR:
-			if is_sprinting:
+			if is_sprinting and player.is_on_floor():
 				animated_sprite_2d.play("Running")
 				handle_sprint(delta)
 			else:
@@ -207,7 +207,7 @@ func process_state(delta: float) -> void:
 					handle_movement(facing_direction)
 					
 					
-			if is_sprinting:
+			if is_sprinting and player.is_on_floor():
 				handle_sprint(delta)
 			elif active_state != STATE.WALL_JUMP:
 				handle_movement()
