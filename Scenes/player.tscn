@@ -209,6 +209,7 @@ animation = &"Jumping"
 autoplay = "Idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1477219069]
+unique_name_in_owner = true
 light_mask = 3
 position = Vector2(0, -13)
 shape = SubResource("RectangleShape2D_eljyk")
@@ -216,13 +217,10 @@ shape = SubResource("RectangleShape2D_eljyk")
 [node name="Timer" type="Timer" parent="." unique_id=1710482124]
 one_shot = true
 
-[node name="RayCastLow" type="RayCast2D" parent="." unique_id=883353874]
-position = Vector2(0, -11)
-target_position = Vector2(13, 0)
-
-[node name="RayCastHigh" type="RayCast2D" parent="." unique_id=1785982922]
-position = Vector2(0, -27)
-target_position = Vector2(13, 0)
+[node name="ledge_climber" type="RayCast2D" parent="." unique_id=883353874]
+unique_name_in_owner = true
+position = Vector2(0, -26)
+target_position = Vector2(8, 10)
 
 [node name="Movement_game_2" type="Node" parent="." unique_id=355923904]
 script = ExtResource("4_vgqql")
@@ -231,5 +229,15 @@ script = ExtResource("4_vgqql")
 process_callback = 0
 wait_time = 0.09
 one_shot = true
+
+[node name="float_timer" type="Timer" parent="." unique_id=576254880]
+process_callback = 0
+wait_time = 0.1
+one_shot = true
+
+[node name="ledgespace" type="RayCast2D" parent="." unique_id=398275362]
+unique_name_in_owner = true
+position = Vector2(-14, -2)
+target_position = Vector2(0, -25)
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
