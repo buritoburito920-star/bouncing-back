@@ -43,7 +43,8 @@ const WALL_SLIDE_GRAVITY := 300
 const WALL_SLIDE_VELOCITY := 500
 const WALL_JUMP_LENG := 30
 const WALL_JUMP_VELOCITY := -500
-
+const WALL_CLIMB_VELOCITY := -300
+const WALL_CLIMB_LENG := 65
 
 func _ready() -> void:
 	switch_state(active_state)
@@ -109,6 +110,12 @@ func switch_state(to_state: STATE) -> void:
 			set_facing_direction(-facing_direction)
 			saved_position = player.position
 			
+			
+		STATE.WALL_CLIMB:
+			animated_sprite_2d.play("Double_jump") # need wall_climb aniamtion
+			player.velocity.y = WALL_CLIMB_VELOCITY
+			saved_position = player.position
+			
 func process_state(delta: float) -> void:
 	match active_state:
 		STATE.FALL:
@@ -158,6 +165,8 @@ func process_state(delta: float) -> void:
 			if Input.is_action_just_released("ui_accept") or player.velocity.y >= 0:
 				player.velocity.y = 0
 				switch_state(STATE.FALL)
+			elif Input.is_action_just_pressed("ui_accept"):
+				switch_state(STATE.DOUBLE_JUMP)
 			match active_state:
 				STATE.DOUBLE_JUMP:
 					double_jump_animation_timer.start()
@@ -202,6 +211,18 @@ func process_state(delta: float) -> void:
 				switch_state(STATE.FALL)
 			elif Input.is_action_just_pressed("ui_accept"):
 				switch_state(STATE.WALL_JUMP)
+			elif Input.is_action_just_pressed("Sprinting"):
+				if is_input_toward_facing():
+					switch_state(STATE.WALL_CLIMB)
+				
+		STATE.WALL_CLIMB:
+			var distance = abs(player.position.y - saved_position.y)
+			if distance >= WALL_CLIMB_LENG or player.is_on_ceiling():
+				player.velocity.y = 0
+				switch_state(STATE.WALL_SLIDE)
+			elif is_ledge():
+				switch_state(STATE.LEDGE_JUMP)
+			
 			
 func handle_movement(input_direction: float = 0) -> void:
 	if input_direction == 0:
