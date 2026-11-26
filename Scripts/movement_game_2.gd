@@ -28,6 +28,7 @@ var active_state := STATE.FALL
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 var can_double_jump := false
 var facing_direction = 1
+var saved_position := Vector2.ZERO
 
 const FALL_GRAVITY := 500
 const FALL_VELOCITY := 500
@@ -40,6 +41,8 @@ const FLOAT_VELOCITY := 100
 const LEDGE_JUMP_VELOCITY := -100
 const WALL_SLIDE_GRAVITY := 300
 const WALL_SLIDE_VELOCITY := 500
+const WALL_JUMP_LENG := 30
+const WALL_JUMP_VELOCITY := -500
 
 
 func _ready() -> void:
@@ -100,6 +103,12 @@ func switch_state(to_state: STATE) -> void:
 			can_double_jump = true
 			
 			
+		STATE.WALL_JUMP:
+			animated_sprite_2d.play("Jumping")
+			player.velocity.y = WALL_JUMP_VELOCITY
+			set_facing_direction(-facing_direction)
+			saved_position = player.position
+			
 func process_state(delta: float) -> void:
 	match active_state:
 		STATE.FALL:
@@ -135,9 +144,16 @@ func process_state(delta: float) -> void:
 			elif Input.is_action_just_pressed("ui_accept"):
 				switch_state(STATE.JUMP)
 				
-		STATE.JUMP, STATE.DOUBLE_JUMP, STATE.LEDGE_JUMP:
+		STATE.JUMP, STATE.DOUBLE_JUMP, STATE.LEDGE_JUMP, STATE.WALL_JUMP:
 			player.velocity.y = move_toward(player.velocity.y, 0, JUMP_DECCELERATION * delta)
-			handle_movement()
+			if active_state == STATE.WALL_JUMP:
+				var distance = abs(player.position.x - saved_position.x)
+				if distance >= WALL_JUMP_LENG or can_wall_slide():
+					switch_state(STATE.JUMP)
+				else:
+					handle_movement(facing_direction)
+			if active_state != STATE.WALL_JUMP:
+				handle_movement()
 			
 			if Input.is_action_just_released("ui_accept") or player.velocity.y >= 0:
 				player.velocity.y = 0
@@ -184,9 +200,17 @@ func process_state(delta: float) -> void:
 				switch_state(STATE.LEDGE_CLIMB)
 			elif not can_wall_slide():
 				switch_state(STATE.FALL)
+			elif Input.is_action_just_pressed("ui_accept"):
+				switch_state(STATE.WALL_JUMP)
 			
-func handle_movement() -> void:
-	var direction := signf(Input.get_axis("left", "right"))
+func handle_movement(input_direction: float = 0) -> void:
+	if input_direction == 0:
+		input_direction = signf(Input.get_axis("left", "right"))
+	set_facing_direction(input_direction)
+	player.velocity.x = WALK_VELOCITY * input_direction
+	
+	
+func set_facing_direction(direction: float) -> void:
 	if direction:
 		animated_sprite_2d.flip_h = direction < 0
 		facing_direction = direction
@@ -196,10 +220,6 @@ func handle_movement() -> void:
 		wall_slide.position.x = direction * abs(wall_slide.position.x)
 		wall_slide.target_position.x = direction * abs(wall_slide.target_position.x)
 		wall_slide.force_raycast_update()
-	player.velocity.x = WALK_VELOCITY * direction
-	
-	
-	
 	
 	
 func is_input_toward_facing() -> bool:
