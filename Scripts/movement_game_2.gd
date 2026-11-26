@@ -8,6 +8,7 @@ extends Node
 @onready var double_jump_animation_timer: Timer = $"../double_jump_animation_timer"
 @onready var animations: Timer = $"../animations"
 @onready var wall_slide: RayCast2D = %Wall_slide
+@onready var dash_cool: Timer = $"../Dash_cool"
 
 
 enum STATE {
@@ -29,6 +30,9 @@ var active_state := STATE.FALL
 var can_double_jump := false
 var facing_direction = 1
 var saved_position := Vector2.ZERO
+var can_dash := false
+var dash_jump_buffer := false
+var is_sprinting := false
 
 const FALL_GRAVITY := 500
 const FALL_VELOCITY := 500
@@ -45,6 +49,11 @@ const WALL_JUMP_LENG := 30
 const WALL_JUMP_VELOCITY := -500
 const WALL_CLIMB_VELOCITY := -300
 const WALL_CLIMB_LENG := 65
+const DASH_LENG := 100
+const DASH_VELOCITY := 600
+const SPRINT_VELOCITY := 400
+const SPRINT_ACCEL := 1800
+
 
 func _ready() -> void:
 	switch_state(active_state)
@@ -69,6 +78,7 @@ func switch_state(to_state: STATE) -> void:
 			
 		STATE.FLOOR:
 			can_double_jump = true
+			can_dash = true
 		
 		STATE.JUMP:
 			animated_sprite_2d.play("Jumping")
@@ -79,6 +89,7 @@ func switch_state(to_state: STATE) -> void:
 			animated_sprite_2d.play("Double_jump") 
 			player.velocity.y = DOUBLE_JUMP_VELOCITY
 			can_double_jump = false
+			is_sprinting = false
 			
 		STATE.FLOAT:
 			if float_timer.time_left > 0:
@@ -86,6 +97,7 @@ func switch_state(to_state: STATE) -> void:
 				return
 			animated_sprite_2d.play("Float")
 			player.velocity.y = 0
+			is_sprinting = false
 		
 		STATE.LEDGE_CLIMB:
 			animated_sprite_2d.play("LedgeClimb")
@@ -97,11 +109,15 @@ func switch_state(to_state: STATE) -> void:
 		STATE.LEDGE_JUMP:
 			animated_sprite_2d.play("Double_jump")
 			player.velocity.y = LEDGE_JUMP_VELOCITY
+			can_dash = true
+			is_sprinting = false
 			
 		STATE.WALL_SLIDE:
 			animated_sprite_2d.play("Float") # need wall slide animaiton
 			player.velocity.y = 0
 			can_double_jump = true
+			can_dash = true
+			is_sprinting = false
 			
 			
 		STATE.WALL_JUMP:
@@ -116,11 +132,26 @@ func switch_state(to_state: STATE) -> void:
 			player.velocity.y = WALL_CLIMB_VELOCITY
 			saved_position = player.position
 			
+		STATE.DASH:
+			if dash_cool.time_left > 0:
+				active_state = previous_state
+				return
+			animated_sprite_2d.play("Running") # need dash animation
+			player.velocity.y = 0
+			set_facing_direction(signf(Input.get_axis("left", "right")))
+			player.velocity.x = DASH_VELOCITY * facing_direction
+			saved_position = player.position
+			can_dash = previous_state == STATE.FLOOR or previous_state == STATE.WALL_SLIDE
+			dash_jump_buffer = false
+		
 func process_state(delta: float) -> void:
 	match active_state:
 		STATE.FALL:
 			player.velocity.y = move_toward(player.velocity.y, FALL_VELOCITY, FALL_GRAVITY * delta)
-			handle_movement()
+			if is_sprinting:
+				handle_sprint(delta)
+			else:
+				handle_movement()
 			
 			if player.is_on_floor():
 				switch_state(STATE.FLOOR)
@@ -137,19 +168,27 @@ func process_state(delta: float) -> void:
 				
 			elif is_input_toward_facing() and can_wall_slide():
 				switch_state(STATE.WALL_SLIDE)
+			elif Input.is_action_just_pressed("Sprinting") and can_dash:
+				switch_state(STATE.DASH)
 				
 				
 		STATE.FLOOR:
-			if Input.get_axis("left", "right"):
-				animated_sprite_2d.play("Walking")
+			if is_sprinting:
+				animated_sprite_2d.play("Running")
+				handle_sprint(delta)
 			else:
-				animated_sprite_2d.play("Idle")
-			handle_movement()
+				if Input.get_axis("left", "right"):
+					animated_sprite_2d.play("Walking")
+				else:
+					animated_sprite_2d.play("Idle")
+				handle_movement()
 		
 			if not player.is_on_floor():
 				switch_state(STATE.FALL)
 			elif Input.is_action_just_pressed("ui_accept"):
 				switch_state(STATE.JUMP)
+			elif Input.is_action_just_pressed("Sprinting"):
+				switch_state(STATE.DASH)
 				
 		STATE.JUMP, STATE.DOUBLE_JUMP, STATE.LEDGE_JUMP, STATE.WALL_JUMP:
 			player.velocity.y = move_toward(player.velocity.y, 0, JUMP_DECCELERATION * delta)
@@ -159,7 +198,11 @@ func process_state(delta: float) -> void:
 					switch_state(STATE.JUMP)
 				else:
 					handle_movement(facing_direction)
-			if active_state != STATE.WALL_JUMP:
+					
+					
+			if is_sprinting:
+				handle_sprint(delta)
+			elif active_state != STATE.WALL_JUMP:
 				handle_movement()
 			
 			if Input.is_action_just_released("ui_accept") or player.velocity.y >= 0:
@@ -167,6 +210,8 @@ func process_state(delta: float) -> void:
 				switch_state(STATE.FALL)
 			elif Input.is_action_just_pressed("ui_accept"):
 				switch_state(STATE.DOUBLE_JUMP)
+			elif Input.is_action_just_pressed("Sprinting") and can_dash:
+				switch_state(STATE.DASH)
 			match active_state:
 				STATE.DOUBLE_JUMP:
 					double_jump_animation_timer.start()
@@ -184,8 +229,11 @@ func process_state(delta: float) -> void:
 				switch_state(STATE.LEDGE_CLIMB)
 			elif is_input_toward_facing() and can_wall_slide():
 				switch_state(STATE.WALL_SLIDE)
+			elif Input.is_action_just_pressed("Sprinting") and can_dash:
+				switch_state(STATE.DASH)
 				
 		STATE.LEDGE_CLIMB:
+			is_sprinting = Input.is_action_pressed("Sprinting")
 			if not animated_sprite_2d.is_playing():
 				animated_sprite_2d.play("LedgeClimb")
 				var offset := ledge_climb_offset()
@@ -214,6 +262,9 @@ func process_state(delta: float) -> void:
 			elif Input.is_action_just_pressed("Sprinting"):
 				if is_input_toward_facing():
 					switch_state(STATE.WALL_CLIMB)
+				else:
+					set_facing_direction(-facing_direction)
+					switch_state(STATE.DASH)
 				
 		STATE.WALL_CLIMB:
 			var distance = abs(player.position.y - saved_position.y)
@@ -222,14 +273,38 @@ func process_state(delta: float) -> void:
 				switch_state(STATE.WALL_SLIDE)
 			elif is_ledge():
 				switch_state(STATE.LEDGE_JUMP)
+				
+				
+		STATE.DASH:
+			is_sprinting = Input.is_action_pressed("Sprinting")
+			dash_cool.start()
+			if player.is_on_floor():
+				buffer_timer_2.start()
+			if Input.is_action_just_pressed("ui_accept"):
+				dash_jump_buffer = true
+			var distance := absf(player.position.x - saved_position.x)
+			if distance >= DASH_LENG or signf(player.get_last_motion().x) != facing_direction:
+				if dash_jump_buffer and buffer_timer_2.time_left > 0:
+					switch_state(STATE.JUMP)
+				elif player.is_on_floor():
+					switch_state(STATE.FLOOR)
+				else:
+					switch_state(STATE.FALL)
+			elif is_ledge() and is_space():
+				switch_state(STATE.LEDGE_CLIMB)
+			elif can_wall_slide():
+				switch_state(STATE.WALL_SLIDE)
 			
-			
-func handle_movement(input_direction: float = 0) -> void:
+func handle_movement(input_direction: float = 0, horizontal_velocity: float = WALK_VELOCITY, step: float = WALK_VELOCITY) -> void:
 	if input_direction == 0:
 		input_direction = signf(Input.get_axis("left", "right"))
 	set_facing_direction(input_direction)
-	player.velocity.x = WALK_VELOCITY * input_direction
+	player.velocity.x = move_toward(player.velocity.x, input_direction * horizontal_velocity, step)
 	
+
+func handle_sprint(delta: float) -> void:
+	handle_movement(facing_direction, SPRINT_VELOCITY, SPRINT_ACCEL * delta)
+	is_sprinting = Input.is_action_pressed("Sprinting") and not player.is_on_wall()
 	
 func set_facing_direction(direction: float) -> void:
 	if direction:
