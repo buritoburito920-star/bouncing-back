@@ -325,6 +325,9 @@ animations = [{
 "speed": 30.0
 }]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_1gqpt"]
+radius = 9.055386
+
 [node name="Player" type="CharacterBody2D" unique_id=749129910]
 position = Vector2(0, 1)
 collision_layer = 3
@@ -399,6 +402,13 @@ frame_progress = 1.0
 [node name="Attack_timer" type="Timer" parent="." unique_id=408715095]
 process_callback = 0
 one_shot = true
+
+[node name="Test" type="CharacterBody2D" parent="." unique_id=235053047]
+
+[node name="CollsionShape2D" type="CollisionShape2D" parent="Test" unique_id=685043722]
+position = Vector2(28, -11)
+shape = SubResource("CircleShape2D_1gqpt")
+disabled = true
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="double_jump_animation_timer" to="Movement_game_2" method="_on_double_jump_animation_timer_timeout"]

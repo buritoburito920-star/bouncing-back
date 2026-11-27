@@ -12,6 +12,7 @@ extends Node
 @onready var camera: Camera2D = $"../Camera2D"
 @onready var attack: AnimatedSprite2D = $"../Attack"
 @onready var attack_timer: Timer = $"../Attack_timer"
+@onready var test: CollisionShape2D = $"../Test/CollsionShape2D"
 
 
 enum STATE {
@@ -306,9 +307,6 @@ func process_state(delta: float) -> void:
 			elif can_wall_slide():
 				switch_state(STATE.WALL_SLIDE)
 				
-				
-				
-				
 		STATE.TURNING:
 			if signf(player.velocity.x) == facing_direction and is_input_against_facing():
 				set_facing_direction(-facing_direction)
@@ -336,6 +334,7 @@ func process_state(delta: float) -> void:
 		if attack_timer.time_left <= 0:
 			attack.visible = true
 			attack.play("Attack")
+			test.disabled = false
 			attack_timer.start()
 	if facing_direction != 0:
 		if facing_direction == -1:
@@ -401,12 +400,17 @@ func _on_double_jump_animation_timer_timeout() -> void:
 	
 
 
-
-
-
 func can_wall_slide() -> bool:
 	return player.is_on_wall_only() and wall_slide.is_colliding()
 
 
 func _on_attack_animation_finished() -> void:
+	test.disabled = true
 	attack.visible = false
+
+
+func _on_col_attack_area_entered(area: Area2D) -> void:
+	print(area.name)
+	if area.is_in_group("Enemy_ptp"):
+		print("baaaaah")
+		area.owner.queue_free()
