@@ -5,6 +5,8 @@
 [ext_resource type="Texture2D" uid="uid://bnb7cwi3m8hru" path="res://Assets/Sprites/Maptiles/monochrome_tilemap_transparent_packed.png" id="2_vs030"]
 [ext_resource type="PackedScene" uid="uid://di7u3mmufu6c5" path="res://Scenes/lucky_block.tscn" id="3_vs030"]
 [ext_resource type="Script" uid="uid://bhkvyynx0xc44" path="res://Scripts/game_maneger2.gd" id="5_2g0cp"]
+[ext_resource type="FontFile" uid="uid://c7f6yrgsgw4mh" path="res://Assets/Fonts/PixelOperator8.ttf" id="6_iqjhd"]
+[ext_resource type="PackedScene" uid="uid://ua7k6rcki1o5" path="res://Scenes/enemy_ptp.tscn" id="7_yy8vp"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_b0pau"]
 texture = ExtResource("2_vs030")
@@ -196,9 +198,13 @@ texture = ExtResource("2_vs030")
 1:7/0 = 0
 2:7/0 = 0
 3:7/0 = 0
+3:7/0/physics_layer_0/polygon_0/points = PackedVector2Array(-9, -9, 9, -9, 9, 9, -9, 9)
 4:7/0 = 0
+4:7/0/physics_layer_0/polygon_0/points = PackedVector2Array(-9, -9, 9, -9, 9, 9, -9, 9)
 5:7/0 = 0
+5:7/0/physics_layer_0/polygon_0/points = PackedVector2Array(-9, -9, 9, -9, 9, 9, -9, 9)
 6:7/0 = 0
+6:7/0/physics_layer_0/polygon_0/points = PackedVector2Array(-9, -9, 9, -9, 9, 9, -9, 9)
 7:7/0 = 0
 8:7/0 = 0
 9:7/0 = 0
@@ -213,8 +219,11 @@ texture = ExtResource("2_vs030")
 18:7/0 = 0
 19:7/0 = 0
 0:8/0 = 0
+0:8/0/physics_layer_0/polygon_0/points = PackedVector2Array(-9, -9, 9, -9, 9, -1.1316695, -9, -1.13167)
 1:8/0 = 0
+1:8/0/physics_layer_0/polygon_0/points = PackedVector2Array(-9, -9, 9, -9, 9, -1.1316695, -9, -1.13167)
 2:8/0 = 0
+2:8/0/physics_layer_0/polygon_0/points = PackedVector2Array(-9, -9, 9, -9, 9, -1.1316695, -9, -1.13167)
 3:8/0 = 0
 4:8/0 = 0
 5:8/0 = 0
@@ -465,7 +474,7 @@ tile_size = Vector2i(18, 18)
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_b0pau")
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_b0pau"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_yy8vp"]
 resource_local_to_scene = true
 atlas = ExtResource("2_vs030")
 region = Rect2(112, 16, 16, 16)
@@ -477,20 +486,125 @@ distance = -177.0
 script = ExtResource("1_b0pau")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1700694469]
-offset_left = -3386.0
-offset_top = -1321.0
-offset_right = 5853.0
-offset_bottom = 2034.0
+z_index = -1
+offset_left = -2027.0
+offset_top = -2017.0
+offset_right = 7212.0
+offset_bottom = 1338.0
 color = Color(0.13333334, 0.13725491, 0.13725491, 1)
+
+[node name="Labels" type="Node" parent="." unique_id=1273839515]
+
+[node name="Label" type="Label" parent="Labels" unique_id=1839442072]
+z_index = -1
+offset_left = -160.0
+offset_top = -71.0
+offset_right = -33.0
+offset_bottom = -45.0
+theme_override_colors/font_color = Color(0.5705783, 0.57057834, 0.57057834, 1)
+theme_override_fonts/font = ExtResource("6_iqjhd")
+theme_override_font_sizes/font_size = 8
+text = "Welcome to 
+the second game!
+Becareful
+don't fall."
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="Labels" unique_id=292383434]
+z_index = -1
+offset_left = 338.0
+offset_top = -121.0
+offset_right = 493.0
+offset_bottom = -69.0
+theme_override_colors/font_color = Color(0.5705783, 0.57057834, 0.57057834, 1)
+theme_override_fonts/font = ExtResource("6_iqjhd")
+theme_override_font_sizes/font_size = 8
+text = "If you played silksong
+before you would
+be very famillier with
+this, as this was inspired
+by them."
+horizontal_alignment = 1
+
+[node name="Label3" type="Label" parent="Labels" unique_id=558233506]
+z_index = -1
+offset_left = 227.0
+offset_top = 16.0
+offset_right = 406.0
+offset_bottom = 68.0
+theme_override_colors/font_color = Color(0.5705783, 0.57057834, 0.57057834, 1)
+theme_override_fonts/font = ExtResource("6_iqjhd")
+theme_override_font_sizes/font_size = 8
+text = "You can climb this wall
+by jumping, holding the
+jump makes you jump higher.
+You can press shift to wall
+climb while wall sliding."
+horizontal_alignment = 1
+
+[node name="Label4" type="Label" parent="Labels" unique_id=670046747]
+z_index = -1
+offset_left = 122.0
+offset_top = -227.0
+offset_right = 277.0
+offset_bottom = -175.0
+theme_override_colors/font_color = Color(0.5705783, 0.57057834, 0.57057834, 1)
+theme_override_fonts/font = ExtResource("6_iqjhd")
+theme_override_font_sizes/font_size = 8
+text = "You can double jump in
+the air, and if you hold
+the space in the air
+when you don't have
+a double jump you float."
+horizontal_alignment = 1
+
+[node name="Label5" type="Label" parent="Labels" unique_id=1509613819]
+z_index = -1
+offset_left = 339.0
+offset_top = -217.0
+offset_right = 494.0
+offset_bottom = -165.0
+theme_override_colors/font_color = Color(0.5705783, 0.57057834, 0.57057834, 1)
+theme_override_fonts/font = ExtResource("6_iqjhd")
+theme_override_font_sizes/font_size = 8
+text = "Don't forget you can
+zoom out."
+horizontal_alignment = 1
+
+[node name="Label6" type="Label" parent="Labels" unique_id=1907206698]
+z_index = -1
+offset_left = 567.0
+offset_top = -112.0
+offset_right = 722.0
+offset_bottom = -60.0
+theme_override_colors/font_color = Color(0.5705783, 0.57057834, 0.57057834, 1)
+theme_override_fonts/font = ExtResource("6_iqjhd")
+theme_override_font_sizes/font_size = 8
+text = "Ooo a Lucky Block!"
+horizontal_alignment = 1
+
+[node name="Label7" type="Label" parent="Labels" unique_id=1526741799]
+visible = false
+z_index = -1
+offset_left = 566.0
+offset_top = -177.0
+offset_right = 721.0
+offset_bottom = -125.0
+theme_override_colors/font_color = Color(0.5705783, 0.57057834, 0.57057834, 1)
+theme_override_fonts/font = ExtResource("6_iqjhd")
+theme_override_font_sizes/font_size = 8
+text = "Coins
+increase your points."
+horizontal_alignment = 1
 
 [node name="TileMap" type="TileMap" parent="." unique_id=1072178677]
 position = Vector2(11, -4)
 tile_set = SubResource("TileSet_1gqpt")
 format = 2
-layer_0/tile_data = PackedInt32Array(65534, 262144, 4, 65535, 327680, 4, 0, 327680, 4, 1, 327680, 4, 2, 327680, 4, 3, 327680, 4, 4, 327680, 4, 5, 327680, 4, 6, 327680, 4, 7, 327680, 4, 8, 327680, 4, 9, 327680, 4, 10, 327680, 4, 11, 327680, 4, 12, 327680, 4, 13, 327680, 4, 14, 327680, 4, 15, 327680, 4, -65521, 458752, 12, -131057, 458752, 12, -196593, 458752, 12, -262129, 458752, 12, -327665, 458752, 12, -393201, 458752, 12, -458737, 458752, 12, -524273, 458752, 12, -589809, 458752, 11, -589808, 524288, 11, -589807, 524288, 11, -262113, 262144, 6, -262112, 327680, 6, -262111, 327680, 6, -262110, 327680, 6, -262109, 327680, 6, -262108, 327680, 6, -262107, 327680, 6, -262106, 327680, 6, -262105, 327680, 6, -262104, 327680, 6, -262103, 327680, 6, -262102, 327680, 6, -262101, 327680, 6, -262100, 327680, 6, -262099, 327680, 6, -262098, 327680, 6, -262097, 393216, 6)
+layer_0/tile_data = PackedInt32Array(65534, 262144, 4, 65535, 327680, 4, 0, 327680, 4, 1, 327680, 4, 2, 327680, 4, 3, 327680, 4, 4, 327680, 4, 5, 327680, 4, 6, 327680, 4, 7, 327680, 4, 8, 327680, 4, 9, 327680, 4, 10, 327680, 4, 11, 327680, 4, 12, 327680, 4, 13, 327680, 4, 14, 327680, 4, 15, 327680, 4, -65521, 458752, 12, -131057, 458752, 12, -196593, 458752, 12, -262129, 458752, 12, -327665, 458752, 12, -393201, 458752, 12, -458737, 458752, 12, -524273, 458752, 12, -589809, 458752, 11, -589808, 524288, 11, -589807, 524288, 11, -262113, 262144, 6, -262112, 327680, 6, -262111, 327680, 6, -262110, 327680, 6, -262109, 327680, 6, -262108, 327680, 6, -262107, 327680, 6, -262106, 327680, 6, -262105, 327680, 6, -262104, 327680, 6, -262103, 327680, 6, -262102, 327680, 6, -262101, 327680, 6, -262100, 327680, 6, -262099, 327680, 6, -262098, 327680, 6, -262097, 393216, 6, -262069, 327680, 7, -262068, 327680, 7, -262067, 327680, 7, -262070, 262144, 7, -262066, 393216, 7, -262077, 327680, 7, -262076, 327680, 7, -262078, 327680, 7, -262079, 327680, 7, -262082, 262144, 7, -262081, 327680, 7, -262080, 327680, 7, -262075, 327680, 7, -262074, 327680, 7, -262073, 327680, 7, -262072, 327680, 7, -262071, 327680, 7)
 
 [node name="Player" parent="." unique_id=749129910 instance=ExtResource("1_pl37j")]
-position = Vector2(47, -191)
+position = Vector2(39, -39)
 
 [node name="Camera2D" type="Camera2D" parent="Player" unique_id=211460993]
 zoom = Vector2(3, 3)
@@ -500,8 +614,8 @@ rotation_smoothing_enabled = true
 [node name="lucky_blocks" type="Node" parent="." unique_id=640333264]
 
 [node name="LuckyBlock" parent="lucky_blocks" unique_id=1273817338 instance=ExtResource("3_vs030")]
-position = Vector2(449, -462)
-Used_texture = SubResource("AtlasTexture_b0pau")
+position = Vector2(641, -125)
+Used_texture = SubResource("AtlasTexture_yy8vp")
 Lucky_Block_ID = "1"
 
 [node name="Falling_death" type="Area2D" parent="." unique_id=1168802977]
@@ -511,5 +625,8 @@ shape = SubResource("WorldBoundaryShape2D_1gqpt")
 
 [node name="Game_maneger" type="Node" parent="." unique_id=116339095]
 script = ExtResource("5_2g0cp")
+
+[node name="Enemy_ptp" parent="." unique_id=1991807099 instance=ExtResource("7_yy8vp")]
+position = Vector2(132, -2)
 
 [connection signal="body_entered" from="Falling_death" to="Game_maneger" method="_on_falling_death_body_entered"]

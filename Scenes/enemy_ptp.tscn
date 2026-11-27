@@ -1,0 +1,76 @@
+[gd_scene format=3 uid="uid://ua7k6rcki1o5"]
+
+[ext_resource type="Texture2D" uid="uid://bnb7cwi3m8hru" path="res://Assets/Sprites/Maptiles/monochrome_tilemap_transparent_packed.png" id="1_1d8g6"]
+[ext_resource type="Script" uid="uid://b5g6pns3ne5y6" path="res://Scripts/enemy_ptp.gd" id="1_wqfn2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wqfn2"]
+atlas = ExtResource("1_1d8g6")
+region = Rect2(0, 208, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r4oue"]
+atlas = ExtResource("1_1d8g6")
+region = Rect2(80, 208, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agqvt"]
+atlas = ExtResource("1_1d8g6")
+region = Rect2(32, 208, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fgtbe"]
+atlas = ExtResource("1_1d8g6")
+region = Rect2(48, 208, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eeobx"]
+atlas = ExtResource("1_1d8g6")
+region = Rect2(64, 208, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_posss"]
+atlas = ExtResource("1_1d8g6")
+region = Rect2(16, 208, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1gqpt"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wqfn2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r4oue")
+}],
+"loop": 1,
+"name": &"Idle",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agqvt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fgtbe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eeobx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_posss")
+}],
+"loop": 1,
+"name": &"Walk",
+"speed": 8.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1gqpt"]
+size = Vector2(9.75, 11)
+
+[node name="Enemy_ptp" type="Node2D" unique_id=1991807099]
+script = ExtResource("1_wqfn2")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=860467877]
+position = Vector2(0, -8)
+sprite_frames = SubResource("SpriteFrames_1gqpt")
+animation = &"Walk"
+
+[node name="StaticBody2D" type="StaticBody2D" parent="AnimatedSprite2D" unique_id=1166079380]
+
+[node name="Enemy" type="CollisionShape2D" parent="AnimatedSprite2D/StaticBody2D" unique_id=674444204]
+position = Vector2(0, 1.5)
+shape = SubResource("RectangleShape2D_1gqpt")

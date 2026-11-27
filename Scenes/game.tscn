@@ -1035,16 +1035,16 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Label3" type="Label" parent="Labels" unique_id=517959531]
-offset_left = -32.0
-offset_top = -288.0
-offset_right = 125.0
-offset_bottom = -225.0
+offset_left = -66.0
+offset_top = -294.0
+offset_right = 91.0
+offset_bottom = -231.0
 theme_override_colors/font_color = Color(0.0038994332, 0.3102145, 0.41948867, 1)
 theme_override_fonts/font = ExtResource("5_wowpa")
 theme_override_font_sizes/font_size = 8
-text = "you can press E to
-zoom in and Q to
-zoom out"
+text = "You can zoom
+using the scroll
+wheel"
 horizontal_alignment = 1
 vertical_alignment = 1
 
