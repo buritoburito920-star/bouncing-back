@@ -9,6 +9,8 @@ extends Node
 @onready var animations: Timer = $"../animations"
 @onready var wall_slide: RayCast2D = %Wall_slide
 @onready var dash_cool: Timer = $"../Dash_cool"
+@onready var camera: Camera2D = $"../Camera2D"
+#@onready var attack: AnimatedSprite2D = $"../Attack"
 
 
 enum STATE {
@@ -34,10 +36,10 @@ var can_dash := false
 var dash_jump_buffer := false
 var is_sprinting := false
 
-const FALL_GRAVITY := 500
+const FALL_GRAVITY := 1100
 const FALL_VELOCITY := 500
 const WALK_VELOCITY := 120
-const JUMP_VELOCITY := -600
+const JUMP_VELOCITY := -500
 const JUMP_DECCELERATION := 1500
 const DOUBLE_JUMP_VELOCITY := -450
 const FLOAT_GRAVITY := 200
@@ -48,17 +50,18 @@ const WALL_SLIDE_VELOCITY := 500
 const WALL_JUMP_LENG := 30
 const WALL_JUMP_VELOCITY := -500
 const WALL_CLIMB_VELOCITY := -300
-const WALL_CLIMB_LENG := 65
+const WALL_CLIMB_LENG := 40
 const DASH_LENG := 100
 const DASH_VELOCITY := 600
-const SPRINT_VELOCITY := 400
-const SPRINT_ACCEL := 1800
+const SPRINT_VELOCITY := 250
+const SPRINT_ACCEL := 1200
 const FLOAT_ACCEL := 700
 
 
 func _ready() -> void:
 	switch_state(active_state)
 	ledge_climber.add_exception(player)
+	#attack.visible = false
 	
 	
 
@@ -115,7 +118,7 @@ func switch_state(to_state: STATE) -> void:
 			is_sprinting = false
 			
 		STATE.WALL_SLIDE:
-			animated_sprite_2d.play("Float") # need wall slide animaiton
+			animated_sprite_2d.play("Wall_slide") # need wall slide animaiton
 			player.velocity.y = 0
 			can_double_jump = true
 			can_dash = true
@@ -138,7 +141,7 @@ func switch_state(to_state: STATE) -> void:
 			if dash_cool.time_left > 0:
 				active_state = previous_state
 				return
-			animated_sprite_2d.play("Running") # need dash animation
+			animated_sprite_2d.play("Dash") # need dash animation
 			player.velocity.y = 0
 			set_facing_direction(signf(Input.get_axis("left", "right")))
 			player.velocity.x = DASH_VELOCITY * facing_direction
@@ -318,6 +321,15 @@ func process_state(delta: float) -> void:
 				animated_sprite_2d.play("Double_jump")
 				is_sprinting = false
 				switch_state(STATE.JUMP)
+				
+	if Input.is_action_just_pressed("zoom in"):
+		if camera.zoom.x <= 5:
+			camera.zoom.x += 1
+			camera.zoom.y += 1
+	if Input.is_action_just_pressed("zoom out"):
+		if camera.zoom.x > 1:
+			camera.zoom.x -= 1
+			camera.zoom.y -= 1
 			
 func handle_movement(input_direction: float = 0, horizontal_velocity: float = WALK_VELOCITY, step: float = WALK_VELOCITY) -> void:
 	if input_direction == 0:
@@ -370,6 +382,7 @@ func ledge_climb_offset() -> Vector2:
 
 func _on_double_jump_animation_timer_timeout() -> void:
 	animated_sprite_2d.play("Jump_air")
+
 
 
 

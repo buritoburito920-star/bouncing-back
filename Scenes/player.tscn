@@ -6,6 +6,10 @@
 [ext_resource type="Texture2D" uid="uid://cn4kymn7t5iof" path="res://Assets/Sprites/Player/update.png" id="4_fkybt"]
 [ext_resource type="Script" uid="uid://274w07ntnloa" path="res://Scripts/movement_game_2.gd" id="4_vgqql"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_xuaoq"]
+atlas = ExtResource("4_fkybt")
+region = Rect2(64, 192, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_bi64h"]
 atlas = ExtResource("4_fkybt")
 region = Rect2(96, 128, 32, 32)
@@ -122,8 +126,20 @@ region = Rect2(64, 64, 32, 32)
 atlas = ExtResource("1_v0iea")
 region = Rect2(0, 96, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_wohnl"]
+atlas = ExtResource("4_fkybt")
+region = Rect2(32, 192, 32, 32)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_1gqpt"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xuaoq")
+}],
+"loop": 1,
+"name": &"Dash",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_bi64h")
@@ -260,6 +276,14 @@ animations = [{
 "loop": 1,
 "name": &"Walking",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wohnl")
+}],
+"loop": 1,
+"name": &"Wall_slide",
+"speed": 5.0
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eljyk"]
@@ -276,7 +300,7 @@ unique_name_in_owner = true
 visibility_layer = 2
 position = Vector2(-1, -16)
 sprite_frames = SubResource("SpriteFrames_1gqpt")
-animation = &"Idle"
+animation = &"Wall_slide"
 autoplay = "Idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1477219069]

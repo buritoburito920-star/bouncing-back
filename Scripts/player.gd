@@ -154,19 +154,3 @@ func _physics_process(delta: float) -> void:
 		if camera.zoom.x > 1:
 			camera.zoom.x -= 1
 			camera.zoom.y -= 1
-	
-func start_dash(dir: float):
-	is_dashing = true
-	can_dash = false
-	var dash_dir := dir
-	if dash_dir == 0:
-		dash_dir = -1.0 if animations.flip_h else 1.0
-		
-	velocity.x = dash_dir * DASH_SPEED
-	velocity.y = 0
-	animations.play("Running")
-	await get_tree().create_timer(DASH_TIME).timeout
-	is_dashing = false
-	velocity.x = 0
-	await get_tree().create_timer(DASH_COOLDOWN).timeout
-	can_dash = true
