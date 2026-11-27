@@ -10,7 +10,8 @@ extends Node
 @onready var wall_slide: RayCast2D = %Wall_slide
 @onready var dash_cool: Timer = $"../Dash_cool"
 @onready var camera: Camera2D = $"../Camera2D"
-#@onready var attack: AnimatedSprite2D = $"../Attack"
+@onready var attack: AnimatedSprite2D = $"../Attack"
+@onready var attack_timer: Timer = $"../Attack_timer"
 
 
 enum STATE {
@@ -61,7 +62,7 @@ const FLOAT_ACCEL := 700
 func _ready() -> void:
 	switch_state(active_state)
 	ledge_climber.add_exception(player)
-	#attack.visible = false
+	attack.visible = false
 	
 	
 
@@ -331,6 +332,21 @@ func process_state(delta: float) -> void:
 			camera.zoom.x -= 1
 			camera.zoom.y -= 1
 			
+	if Input.is_action_just_pressed("attack"):
+		if attack_timer.time_left <= 0:
+			attack.visible = true
+			attack.play("Attack")
+			attack_timer.start()
+	if facing_direction != 0:
+		if facing_direction == -1:
+			attack.flip_h = true
+			attack.position.x = -26
+		if facing_direction == 1:
+			attack.flip_h = false
+			if attack.position.x == -26:
+				attack.position.x = 22
+			
+			
 func handle_movement(input_direction: float = 0, horizontal_velocity: float = WALK_VELOCITY, step: float = WALK_VELOCITY) -> void:
 	if input_direction == 0:
 		input_direction = signf(Input.get_axis("left", "right"))
@@ -382,7 +398,7 @@ func ledge_climb_offset() -> Vector2:
 
 func _on_double_jump_animation_timer_timeout() -> void:
 	animated_sprite_2d.play("Jump_air")
-
+	
 
 
 
@@ -390,3 +406,7 @@ func _on_double_jump_animation_timer_timeout() -> void:
 
 func can_wall_slide() -> bool:
 	return player.is_on_wall_only() and wall_slide.is_colliding()
+
+
+func _on_attack_animation_finished() -> void:
+	attack.visible = false

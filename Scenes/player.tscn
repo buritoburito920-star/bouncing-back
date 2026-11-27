@@ -289,6 +289,42 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eljyk"]
 size = Vector2(11, 23)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_36dho"]
+atlas = ExtResource("4_fkybt")
+region = Rect2(96, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yh6i2"]
+atlas = ExtResource("4_fkybt")
+region = Rect2(0, 224, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nv4vc"]
+atlas = ExtResource("4_fkybt")
+region = Rect2(32, 224, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8gxox"]
+atlas = ExtResource("4_fkybt")
+region = Rect2(64, 224, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_eljyk"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_36dho")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yh6i2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nv4vc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8gxox")
+}],
+"loop": 0,
+"name": &"Attack",
+"speed": 30.0
+}]
+
 [node name="Player" type="CharacterBody2D" unique_id=749129910]
 position = Vector2(0, 1)
 collision_layer = 3
@@ -353,5 +389,17 @@ process_callback = 0
 wait_time = 0.2
 one_shot = true
 
+[node name="Attack" type="AnimatedSprite2D" parent="." unique_id=2012655545]
+position = Vector2(23, -13)
+sprite_frames = SubResource("SpriteFrames_eljyk")
+animation = &"Attack"
+frame = 3
+frame_progress = 1.0
+
+[node name="Attack_timer" type="Timer" parent="." unique_id=408715095]
+process_callback = 0
+one_shot = true
+
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="double_jump_animation_timer" to="Movement_game_2" method="_on_double_jump_animation_timer_timeout"]
+[connection signal="animation_finished" from="Attack" to="Movement_game_2" method="_on_attack_animation_finished"]
