@@ -3,6 +3,7 @@ extends Node2D
 @onready var enemy: CollisionShape2D = $AnimatedSprite2D/Enemy_ptp/Enemy
 
 var direction = 1
+var health := 2
 
 const SPEED := 60
 const POSITION_LIMIT_R := 50
@@ -22,4 +23,6 @@ func _process(delta: float) -> void:
 
 func _on_enemy_ptp_body_entered(body: Node2D) -> void:
 	if body.name == "Test":
-		queue_free()
+		health -= 1
+		if health <= 0:
+			queue_free()

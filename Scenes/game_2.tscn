@@ -627,6 +627,9 @@ shape = SubResource("WorldBoundaryShape2D_1gqpt")
 script = ExtResource("5_2g0cp")
 
 [node name="Enemy_ptp" parent="." unique_id=1991807099 instance=ExtResource("7_yy8vp")]
-position = Vector2(132, -2)
+position = Vector2(1371, -74)
+
+[node name="Enemy_ptp2" parent="." unique_id=1689045950 instance=ExtResource("7_yy8vp")]
+position = Vector2(1257, -74)
 
 [connection signal="body_entered" from="Falling_death" to="Game_maneger" method="_on_falling_death_body_entered"]

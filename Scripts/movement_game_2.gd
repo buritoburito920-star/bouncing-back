@@ -340,10 +340,12 @@ func process_state(delta: float) -> void:
 		if facing_direction == -1:
 			attack.flip_h = true
 			attack.position.x = -26
+			test.position.x = -26
 		if facing_direction == 1:
 			attack.flip_h = false
 			if attack.position.x == -26:
 				attack.position.x = 22
+				test.position.x = 22
 			
 			
 func handle_movement(input_direction: float = 0, horizontal_velocity: float = WALK_VELOCITY, step: float = WALK_VELOCITY) -> void:
